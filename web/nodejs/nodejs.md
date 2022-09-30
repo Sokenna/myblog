@@ -147,19 +147,19 @@
       1. 提高了代码的复用性
       2. 提高代码的可维护性
       3. 可以实现按需加载
-  - 6.2 模块化的规范
-    - 6.2.1 模块化的规范就是对代码进行模块化的拆分和组合时，需要遵守的那些规则。
+  - 6.1.3 模块化的规范
+    - 6.1.3.1 模块化的规范就是对代码进行模块化的拆分和组合时，需要遵守的那些规则。
     - 例如：
       - 使用什么样的语法格式来引用模块
       - 在模块中使用什么样的语法格式向外暴露成员
-    - 6.2.2 模块化的好处
+    - 6.1.3.2 模块化的好处
       - 大家都遵守相同的模块化规范写代码，降低了沟通的成本。极大方便了各个模块之间的相互调用，利人利己
-  - 6.3 Node.js中模块的分类
+  - 6.1.4 Node.js中模块的分类
     - Node.js 中根据模块来源的不同，将模块分为了3大类，分别是：
       - 内置模块(内置模块是由Node.js官方提供的，例如fs、path、http等)
       - 自定义模块(用户创建的每个.js文件，都是自定义模块)
       - 第三方模块(由第三方开发出来的模块，并非官方提供的内置模块，也不是用户创建的自定义模块，使用前需要先下载)
-  - 6.4 加载模块
+  - 6.1.5 加载模块
     - 使用强大的require()方法，可以加载需要的内置模块、用户自定义模块、第三方模块进行使用。例如：
     ```javascript
         //1.加载内置的fs模块
@@ -170,8 +170,8 @@
         const moment = require('moment')
     ```
     - ==注意:== 使用require()方法加载其它模块时，会执行被加载模块中的代码  
-  - 6.5 Node.js中的模块作用域
-    - 6.5.1 什么是模块作用域
+  - 6.1.6 Node.js中的模块作用域
+    - 6.1.6.1 什么是模块作用域
       - 和函数作用域类似，在自定义模块中定义的变量、方法等成员，只能在当前模块内被访问，这种模块级别的访问限制，叫做模块作用域。
       - ```javascript
             //02.test.js
@@ -189,7 +189,7 @@
             console.log('大家好!我是' + username)
         } 
         ```
-    - 6.5.2 模块作用域的好处
+    - 6.1.6.2 模块作用域的好处
       - 防止了全局变量的污染问题
       - ```html
             <body>
@@ -209,12 +209,75 @@
             //login.js
             var username = '1s'
         ```
-    - 6.5.3 module对象
-    - 6.5.4 向往共享模块作用域中的成员
+    - 6.1.6.3 module对象
+    - 6.1.6.4 向外共享模块作用域中的成员
       - module.exports对象
       - 在自定义模块中，可以使用module.exports对象，将模块内的成员共享出去，供外界使用。
       - 外界用require()方法导入自定义模块时，得到的就是module.exports所指向的对象
-- 6.2 CommonJS规定了哪些内容
+      - ```javascript
+            //1.js
+            module.exports = {
+                user:{
+                    username:'snopy'
+                },
+                sayHello: function (){
+                    console.log('hello')
+                }
+            }
+        ```
+        ```javascript
+            //2.js
+            const custom = require('./1.js');
+            console.log(custom)
+            //打印
+            // { user: { username: 'snopy' }, sayHello: [Function: sayHello] }
+            
+        ```
+      - 共享成员时的注意点
+        - 使用require()方法导入模块时，导入的结果，永远以module.exports指向的对象为准
+        - ```javascript
+            //1.js
+            module.exports.username = 'snopy';
+            module.exports.sayHello = function() {
+                console.log('hellos')
+            }
+            //让module.exports指向一个全新的对象
+            module.exports = {
+                nickname:'小黑',
+                sayHi: function() {
+                    console.log('Hi')
+                }
+            }
+          ```
+          ```javascript
+            //1.引入1.js
+            const custom = require('./1.js');
+            console.log(custom)
+            //引入的对象只有新指向的对象
+            //{ username: '小黑', sayHi: [Function: sayHi] }
+          ```
+      - exports对象
+        - 由于module.exports单词写起来比较复杂，为了简化向外共享成员的代码，Node提供了exports对象。
+        - 默认情况下，exports和module.exports指向同一个对象。最终共享的结果，还是以module.exports指向的对象为准。
+        - ```javascript
+            //1.js 
+            console.log(module.exports)
+            console.log(exports)
+            console.log(module.exports === exports)       
+            //{}
+            //{}  
+            //true
+          ```
+      - exports和module.exports的使用误区
+        - 时刻谨记，使用require()模块时，得到的永远是module.exports指向的对象
+        - 为了防止混乱，建议不要在同一个模块中同时使用exports和module.exports
+        
+- 6.2 CommonJS规范
+  - Node.js遵循CommonJS模块化规范，CommonJS规定了模块的特性和各模块之间如何相互依赖。
+  - CommonJS规范
+    1. 每个模块内部，module变量代表当前模块
+    2. module变量是一个对象，它的exports属性(module.exports)是对外的接口
+    3. 加载某个模块，其实就是加载该模块的module.exports属性。require()方法用于加载模块。
 
 - 6.3 Node.js中模块的三大分类各自是什么
 - 6.4 使用npm管理包
