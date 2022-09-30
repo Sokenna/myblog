@@ -159,6 +159,61 @@
       - 内置模块(内置模块是由Node.js官方提供的，例如fs、path、http等)
       - 自定义模块(用户创建的每个.js文件，都是自定义模块)
       - 第三方模块(由第三方开发出来的模块，并非官方提供的内置模块，也不是用户创建的自定义模块，使用前需要先下载)
+  - 6.4 加载模块
+    - 使用强大的require()方法，可以加载需要的内置模块、用户自定义模块、第三方模块进行使用。例如：
+    ```javascript
+        //1.加载内置的fs模块
+        const fs = require('fs')
+        //2.加载自定义模块（可以省略.js后缀）
+        const custom = require('./costom.js')
+        //3.加载第三方模块
+        const moment = require('moment')
+    ```
+    - ==注意:== 使用require()方法加载其它模块时，会执行被加载模块中的代码  
+  - 6.5 Node.js中的模块作用域
+    - 6.5.1 什么是模块作用域
+      - 和函数作用域类似，在自定义模块中定义的变量、方法等成员，只能在当前模块内被访问，这种模块级别的访问限制，叫做模块作用域。
+      - ```javascript
+            //02.test.js
+            const custom = require('./01.custom.js')
+            //输出{}空对象
+            //在02.test.js模块中，无法访问到01.custom.js模块中的私有成员
+            console.log(custom)
+        ```
+      - ```javascript
+        //01.custom.js
+        //1. 在模块作用域中定义常量 username
+        const username = '张三'
+        //在模块作用域中定义函数sayHello
+        function sayHello(){
+            console.log('大家好!我是' + username)
+        } 
+        ```
+    - 6.5.2 模块作用域的好处
+      - 防止了全局变量的污染问题
+      - ```html
+            <body>
+                <h1>index首页</h1>
+                <script src="./reg.js"></script>
+                <script src="./login.js"></script>
+                <script>
+                    console.log(username)
+                </script>
+            </body>
+        ```
+        ```javascript
+            //reg.js
+            var username = '2s'
+        ```
+        ```javascript
+            //login.js
+            var username = '1s'
+        ```
+    - 6.5.3 module对象
+    - 6.5.4 向往共享模块作用域中的成员
+      - module.exports对象
+      - 在自定义模块中，可以使用module.exports对象，将模块内的成员共享出去，供外界使用。
+      - 外界用require()方法导入自定义模块时，得到的就是module.exports所指向的对象
 - 6.2 CommonJS规定了哪些内容
 
 - 6.3 Node.js中模块的三大分类各自是什么
