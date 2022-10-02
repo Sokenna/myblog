@@ -71,3 +71,37 @@
         console.log('started...')
       })
     ```
+- 2.6 局部生效的中间件
+  - 不是app.use()定义的中间件，叫做局部中间件，示例代码如下：
+  - ```javascript
+      const express = require('express');
+      const app = new express();
+      const mw = function (req, res, next){
+        console.log('中间件一');
+        next();
+      }
+      //不使用app.use()进行全局注册，监听路径上注册.
+      app.get('/user',mw,(req, res) => {
+        res.send('ok')
+      })
+       //中间件不会发生传递
+      app.get('/about',(req, res) => {
+        res.send('ok')
+      })
+      app.listen(8080,() => {
+        console.log('ok')
+      })
+    ```
+- 2.7 定义多个局部中间件
+  - 可以在路由中，通过如下两种等价的方式，使用多个局部中间件：
+  - ```javascript
+      //以下两种写法是‘完全等价’的，可以根据自己的喜好，选择任意一种方式进行使用
+      app.get('/', mw1, mw2, (req, res) => {})
+      app.get('/', [mw1, mw2], (req, res) => {})
+    ```
+- 2.8 了解中间件使用的五个注意事项
+  1. 一定要在路由之前注册中间件
+  2. 客户端发送过来的请求，可以连续调用多个中间件进行处理
+  3. 执行完中间件的业务代码之后，不用忘记调用next()函数
+  4. 为了防止代码逻辑混乱，调用next()函数后不要再写额外的代码
+  5. 连续调用多个中间件时，多个中间件之间，共享req和res对象。
