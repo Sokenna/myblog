@@ -339,8 +339,13 @@
               "license": "ISC" 
             }
           ```
-
-
+        - 6.3.7.7
+          - 将不同的功能进行模块化拆分
+            1. 将格式化时间的功能，拆分到src -> dateFormat.js中
+            2. 将处理HTML字符串的功能，拆分到src -> htmlEscape.js中
+            3. 在index.js 中，导入两个模块，得到需要向外共享的方法
+            4. 在index.js中，使用module.exports把对应的方法共享出去
+            
 
 
 
